@@ -42,6 +42,23 @@ services:
         condition: service_started
     restart: unless-stopped
 
+  ingestion:
+    build: ../app-webtoon/services/ingestion
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/contents
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=dev
+      - INGEST_DIR=/data
+      - TZ=UTC
+    volumes:
+      - ./data/ingestion:/data:ro
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   pgdata:
   redisdata:
